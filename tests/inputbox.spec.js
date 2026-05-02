@@ -1,6 +1,6 @@
 const {test, expect} = require('@playwright/test');
 
-test.only("Input Box",async ({page})=>{
+test("Input Box",async ({page})=>{
 
 await page.goto("https://demo.nopcommerce.com/register")
 
