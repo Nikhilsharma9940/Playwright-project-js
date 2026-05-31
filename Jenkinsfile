@@ -36,7 +36,7 @@ pipeline {
 
         stage('Run Playwright Tests') {
             steps {
-                bat 'npx playwright test tests/calender.spec.js --reporter=html,junit'
+                bat 'npx playwright test tests/calender.spec.js --project=chromium --reporter=html,junit'
             }
         }
     }
