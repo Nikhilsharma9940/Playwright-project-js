@@ -1,11 +1,9 @@
 pipeline {
     agent any
 
-
-
     environment {
         CI = 'true'
-        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}/.playwright-browsers"
+        PLAYWRIGHT_BROWSERS_PATH = "${WORKSPACE}\\.playwright-browsers"
     }
 
     stages {
@@ -17,32 +15,36 @@ pipeline {
             }
         }
 
+        stage('Check Node Version') {
+            steps {
+                bat 'node -v'
+                bat 'npm -v'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'
+                bat 'npm ci'
             }
         }
 
         stage('Install Playwright Browsers') {
             steps {
-                sh 'npx playwright install --with-deps chromium'
-                // To run all browsers: npx playwright install --with-deps
+                bat 'npx playwright install --with-deps chromium'
             }
         }
 
         stage('Run Playwright Tests') {
             steps {
-                sh 'npx playwright test --reporter=html,junit'
+                bat 'npx playwright test --reporter=html,junit'
             }
         }
     }
 
     post {
         always {
-            // Publish JUnit XML test results
             junit testResults: 'test-results/**/*.xml', allowEmptyResults: true
 
-            // Publish Playwright HTML report as an artifact
             publishHTML(target: [
                 allowMissing         : true,
                 alwaysLinkToLastBuild: true,
@@ -52,7 +54,6 @@ pipeline {
                 reportName           : 'Playwright HTML Report'
             ])
 
-            // Archive test results and screenshots/videos on failure
             archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
         }
 
